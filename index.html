@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hình Vẽ Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0d0f;
+      --surface: #16161a;
+      --border:  #2a2a32;
+      --accent:  #e8ff47;
+      --accent2: #ff6b35;
+      --text:    #f0f0f0;
+      --muted:   #888;
+      --radius:  12px;
+    }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== PAGE SYSTEM ===== */
+    .page { display: none; }
+    .page.active { display: flex; }
+
+    /* ===== MAIN PAGE ===== */
+    #main-page {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 48px;
+      padding: 40px;
+      background:
+        radial-gradient(ellipse 60% 40% at 70% 20%, rgba(232,255,71,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 20% 80%, rgba(255,107,53,.06) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .main-header {
+      text-align: center;
+    }
+
+    .main-header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .main-header p {
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: .9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn-create {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      padding: 18px 40px;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 0 40px rgba(232,255,71,.25);
+    }
+
+    .btn-create:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 8px 40px rgba(232,255,71,.4);
+    }
+
+    .btn-create:active { transform: scale(.97); }
+
+    .btn-create svg { width: 22px; height: 22px; }
+
+    .corner-tag {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      font-size: .7rem;
+      color: var(--border);
+      letter-spacing: 2px;
+    }
+
+    /* ===== FORM PAGE ===== */
+    #form-page {
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: .8rem;
+      transition: all .15s;
+    }
+    .btn-back:hover { border-color: var(--text); color: var(--text); }
+
+    .topbar-id {
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    .topbar-id span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .btn-done {
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-done:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-done:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* Form body */
+    .form-body {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      padding: 28px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Input section */
+    .field-label {
+      display: block;
+      font-size: .72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .text-input {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .text-input:focus { border-color: var(--accent); }
+
+    /* Canvas area */
+    .canvas-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .canvas-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .tool-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: .8rem;
+      transition: all .15s;
+    }
+    .tool-btn:hover { border-color: var(--text); color: var(--text); }
+    .tool-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d0d0f;
+    }
+
+    .color-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      padding: 0;
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+    .color-btn:hover { border-color: var(--accent); }
+    .color-btn input[type="color"] {
+      width: 100%; height: 100%;
+      border: none; outline: none;
+      cursor: pointer; padding: 0;
+      background: none;
+      transform: scale(1.4);
+    }
+
+    .size-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .size-group input[type="range"] {
+      accent-color: var(--accent);
+      width: 90px;
+      cursor: pointer;
+    }
+    #brush-dot {
+      border-radius: 50%;
+      background: #000;
+      flex-shrink: 0;
+      transition: width .1s, height .1s, background .1s;
+      min-width: 4px; min-height: 4px;
+    }
+
+    .res-tag {
+      margin-left: auto;
+      font-size: .68rem;
+      color: var(--border);
+      letter-spacing: 1px;
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Canvas wrapper — responsive but HD internally */
+    .canvas-wrapper {
+      width: 100%;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: crosshair;
+      /* Maintain 16:9 aspect ratio */
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+
+    #drawing-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Status message */
+    .status-msg {
+      text-align: center;
+      font-size: .88rem;
+      padding: 10px 0;
+      min-height: 32px;
+      transition: all .2s;
+    }
+    .status-msg.success { color: var(--accent); }
+    .status-msg.error   { color: #ff5f5f; }
+    .status-msg.warn    { color: var(--accent2); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .topbar { padding: 12px 16px; }
+      .form-body { padding: 16px; gap: 20px; }
+      .canvas-toolbar { gap: 8px; padding: 10px 12px; }
+      .res-tag { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== TRANG CHÍNH ==================== -->
+<div id="main-page" class="page active">
+  <div class="main-header">
+    <h1>Hình Vẽ<br/>Studio</h1>
+    <p>Tạo & lưu hình vẽ vào Google Sheets</p>
+  </div>
+
+  <button class="btn-create" onclick="taoMoi()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Tạo mới
+  </button>
+
+  <div class="corner-tag">HINHDRAW v1.0</div>
+</div>
+
+<!-- ==================== FORM VẼ ==================== -->
+<div id="form-page" class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" onclick="quayLai()">← Quay lại</button>
+      <div class="topbar-id">ID: <span id="display-id">—</span></div>
+    </div>
+    <button class="btn-done" id="btn-hoan-tat" onclick="hoanTat()">✅ Hoàn tất</button>
+  </div>
+
+  <!-- Body -->
+  <div class="form-body">
+
+    <!-- Ký tự -->
+    <div>
+      <label class="field-label" for="ky-tu">Ký tự</label>
+      <input class="text-input" type="text" id="ky-tu" placeholder="Nhập ký tự…" autocomplete="off" />
+    </div>
+
+    <!-- Canvas vẽ -->
+    <div class="canvas-section">
+      <label class="field-label">Hình vẽ Full HD</label>
+
+      <!-- Toolbar -->
+      <div class="canvas-toolbar">
+        <!-- Công cụ -->
+        <button class="tool-btn active" id="btn-pen" onclick="setTool('pen')">
+          ✏️ Bút
+        </button>
+        <button class="tool-btn" id="btn-eraser" onclick="setTool('eraser')">
+          🧹 Tẩy
+        </button>
+
+        <div class="tool-divider"></div>
+
+        <!-- Màu -->
+        <div class="color-btn" title="Màu vẽ">
+          <input type="color" id="color-picker" value="#000000" />
+        </div>
+
+        <!-- Cỡ bút -->
+        <div class="size-group">
+          <input type="range" id="brush-size" min="1" max="60" value="6" />
+          <div id="brush-dot" style="width:6px;height:6px;"></div>
+        </div>
+
+        <div class="tool-divider"></div>
+
+        <!-- Actions -->
+        <button class="tool-btn" onclick="undoCanvas()" title="Ctrl+Z">↩ Undo</button>
+        <button class="tool-btn" onclick="redoCanvas()" title="Ctrl+Y">↪ Redo</button>
+        <button class="tool-btn" onclick="clearCanvas()">🗑 Xóa</button>
+
+        <span class="res-tag">1920 × 1080</span>
+      </div>
+
+      <!-- Canvas -->
+      <div class="canvas-wrapper">
+        <canvas id="drawing-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div id="status-msg" class="status-msg"></div>
+
+  </div><!-- /form-body -->
+</div><!-- /form-page -->
+
+<script src="script.js"></script>
+</body>
+</html>
