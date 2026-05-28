@@ -3,7 +3,7 @@
 //  ⚠️  Thay YOUR_WEB_APP_URL bằng URL bạn deploy từ Apps Script
 // ============================================================
 
-const API_URL = 'YOUR_WEB_APP_URL'; // <-- đổi sau khi deploy
+const API_URL = 'https://script.google.com/macros/s/AKfycbxm45tbFXWT6aJexIpEDURd5OSx53X3WaIssfY7IvJSVmRBf0Im7suaMDSdSvyIrIegyw/exec'; // <-- đổi sau khi deploy
 
 // ---------- Trạng thái vẽ ----------
 let canvas, ctx;
