@@ -1,4 +1,4 @@
-const APPS_SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbyCiPXywgG2AkxC3mfBfRpqwU3Mc6mBgBHaVPSy75wWHNCqRHFLNkSB5mJ1Df2pnzqubg/exec";
+const APPS_SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwippWmW7tb8cQ4978EUsQGxjjeFud7nGQvSEZKMqDRm3VSfsGkmnspK7ex0hxIxWXX5Q/exec";
 
 const audio = document.getElementById('audio-player');
 const btnPlay = document.getElementById('btn-play');
