@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trình phát nhạc</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
     .player-container { background: #181818; padding: 25px; border-radius: 12px; width: 450px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); box-sizing: border-box; }
@@ -36,28 +37,28 @@
       <span id="time-display">0:00 / 0:00</span>
     </div>
     <div>
-      <input type="range" id="seek-slider" value="0" min="0" step="1">
+      <input type="range" id="seek-slider" value="0" min="0" step="1" aria-label="Thanh tua nhạc">
     </div>
     <div class="control-row" style="margin-top: 15px;">
-      <label style="font-size: 14px; color: #b3b3b3;">Âm lượng:</label>
-      <input type="range" id="volume-slider" value="1" min="0" max="1" step="0.01" style="width: 70%;">
+      <label for="volume-slider" style="font-size: 14px; color: #b3b3b3;">Âm lượng:</label>
+      <input type="range" id="volume-slider" value="1" min="0" max="1" step="0.01" style="width: 70%;" aria-label="Thanh âm lượng">
     </div>
   </div>
 
   <div class="eq-container">
     <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #b3b3b3;">Bộ cân bằng âm thanh (EQ)</h4>
     <div class="eq-grid">
-      <div class="eq-band"><input type="range" id="eq-60" min="-12" max="12" value="0" step="1"><span>60 Hz</span></div>
-      <div class="eq-band"><input type="range" id="eq-230" min="-12" max="12" value="0" step="1"><span>230 Hz</span></div>
-      <div class="eq-band"><input type="range" id="eq-910" min="-12" max="12" value="0" step="1"><span>910 Hz</span></div>
-      <div class="eq-band"><input type="range" id="eq-4k" min="-12" max="12" value="0" step="1"><span>4 kHz</span></div>
-      <div class="eq-band"><input type="range" id="eq-14k" min="-12" max="12" value="0" step="1"><span>14 kHz</span></div>
+      <div class="eq-band"><input type="range" id="eq-60" min="-12" max="12" value="0" step="1" aria-label="EQ 60Hz"><span>60 Hz</span></div>
+      <div class="eq-band"><input type="range" id="eq-230" min="-12" max="12" value="0" step="1" aria-label="EQ 230Hz"><span>230 Hz</span></div>
+      <div class="eq-band"><input type="range" id="eq-910" min="-12" max="12" value="0" step="1" aria-label="EQ 910Hz"><span>910 Hz</span></div>
+      <div class="eq-band"><input type="range" id="eq-4k" min="-12" max="12" value="0" step="1" aria-label="EQ 4kHz"><span>4 kHz</span></div>
+      <div class="eq-band"><input type="range" id="eq-14k" min="-12" max="12" value="0" step="1" aria-label="EQ 14kHz"><span>14 kHz</span></div>
     </div>
   </div>
 
   <div class="playlist" id="playlist-container"></div>
 </div>
 
-<?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
+<script src="script.js"></script>
 </body>
 </html>
