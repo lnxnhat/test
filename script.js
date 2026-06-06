@@ -1,3 +1,6 @@
+// DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY (Link có chữ /exec ở cuối)
+const APPS_SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycby-U3BfexYx7rTt0DZSE2bm2D8muqvGPWIeAHJpsFoEWseqSg5KJ_m0p1IQkVc_3uOmCw/exec";
+
 const audio = document.getElementById('audio-player');
 const btnPlay = document.getElementById('btn-play');
 const btnPause = document.getElementById('btn-pause');
@@ -12,6 +15,7 @@ let trackNode;
 let filters = [];
 let isAudioContextInit = false;
 
+// Thiết lập Equalizer
 function initAudioContext() {
   if (isAudioContextInit) return;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -47,14 +51,26 @@ eqControls.forEach((id, index) => {
   });
 });
 
+// Kéo dữ liệu từ Sheet thông qua API mới
 window.addEventListener('DOMContentLoaded', () => {
-  google.script.run.withSuccessHandler(buildPlaylistUI).getMusicList();
+  trackTitle.innerText = "Đang tải dữ liệu từ Sheet...";
+
+  fetch(APPS_SCRIPT_API_URL)
+    .then(response => response.json())
+    .then(data => {
+      buildPlaylistUI(data);
+    })
+    .catch(error => {
+      console.error("Lỗi:", error);
+      trackTitle.innerText = "Lỗi kết nối. Vui lòng kiểm tra lại link API!";
+    });
 });
 
+// Tạo danh sách phát
 function buildPlaylistUI(songs) {
   playlistContainer.innerHTML = '';
   if (!songs || songs.length === 0) {
-    trackTitle.innerText = "Chưa có nhạc trong Sheet. Hãy chạy hàm updateMusicList!";
+    trackTitle.innerText = "Chưa có nhạc trong Sheet.";
     return;
   }
   trackTitle.innerText = "Chọn bài hát để phát";
@@ -70,6 +86,7 @@ function buildPlaylistUI(songs) {
   });
 }
 
+// Chạy nhạc
 function startTrack(url, name) {
   initAudioContext();
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -92,6 +109,7 @@ volumeSlider.addEventListener('input', (e) => {
   audio.volume = e.target.value;
 });
 
+// Thời gian và tua
 audio.addEventListener('timeupdate', () => {
   seekSlider.max = Math.floor(audio.duration) || 0;
   seekSlider.value = Math.floor(audio.currentTime);
